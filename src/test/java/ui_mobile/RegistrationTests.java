@@ -45,4 +45,97 @@ public class RegistrationTests extends AppiumConfig {
 
          Assert.assertTrue(isWelcomeMessageDisplayed);
     }
+
+    @Test
+    public void registrationWithEmptyFields() {
+        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
+
+        registrationScreen
+                .submitRegistration();
+
+        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
+        Assert.assertTrue(isErrorDisplayed);
+    }
+
+    @Test
+    public void registrationWithInvalidEmail() {
+        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
+
+        registrationScreen
+                .enterName("Harry")
+                .enterLastName("Potter")
+                .enterEmail("invalid-email")
+                .enterPassword("StrongPass123!")
+                .agreeToTerms()
+                .submitRegistration();
+
+        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
+        Assert.assertTrue(isErrorDisplayed);
+    }
+
+    @Test
+    public void registrationWithoutPassword() {
+        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
+
+        registrationScreen
+                .enterName("Harry")
+                .enterLastName("Potter")
+                .enterEmail("harry@example.com")
+                .enterPassword("")
+                .agreeToTerms()
+                .submitRegistration();
+
+        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
+        Assert.assertTrue(isErrorDisplayed);
+    }
+    @Test
+    public void registrationWithoutName() {
+        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
+
+        registrationScreen
+                .enterName("")
+                .enterLastName("Potter")
+                .enterEmail("harry@example.com")
+                .enterPassword("StrongPass123!")
+                .agreeToTerms()
+                .submitRegistration();
+
+        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
+        Assert.assertTrue(isErrorDisplayed);
+    }
+
+    @Test
+    public void registrationWithoutLastName() {
+        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
+
+        registrationScreen
+                .enterName("Harry")
+                .enterLastName("")
+                .enterEmail("harry@example.com")
+                .enterPassword("StrongPass123!")
+                .agreeToTerms()
+                .submitRegistration();
+
+        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
+        Assert.assertTrue(isErrorDisplayed);
+    }
+
+
+    @Test
+    public void registrationWithoutAgreeingToTerms() {
+        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
+
+        registrationScreen
+                .enterName("Harry")
+                .enterLastName("Potter")
+                .enterEmail("harry@example.com")
+                .enterPassword("StrongPass123!")
+                // Terms не отмечены
+                .submitRegistration();
+
+        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
+        Assert.assertTrue(isErrorDisplayed);
+    }
+
 }
+

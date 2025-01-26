@@ -10,7 +10,6 @@ public class RegistrationScreen extends BaseScreen {
         super(driver);
     }
 
-
     @FindBy(id = "com.telran.ilcarro:id/editRegName")
     AndroidElement inputName;
 
@@ -33,7 +32,10 @@ public class RegistrationScreen extends BaseScreen {
             "android.view.ViewGroup/android.widget.FrameLayout[2]/android.view.ViewGroup")
     AndroidElement registrationSuccess;
 
-    // Методы для ввода данных
+
+    @FindBy(id = "android:id/button1")
+            AndroidElement errorMessage;
+
     public RegistrationScreen enterName(String name) {
         inputName.sendKeys(name);
         return this;
@@ -54,7 +56,6 @@ public class RegistrationScreen extends BaseScreen {
         return this;
     }
 
-
     public RegistrationScreen agreeToTerms() {
         if (!checkBox.isSelected()) {
             checkBox.click();
@@ -62,20 +63,24 @@ public class RegistrationScreen extends BaseScreen {
         return this;
     }
 
-
     public RegistrationScreen submitRegistration() {
         btnYalla.click();
         return this;
     }
 
-
-public boolean isWelcomeMessageDisplayed() {
-    try {
-
-        return registrationSuccess.isDisplayed();
-    } catch (Exception e) {
-
-        return false;
+    public boolean isWelcomeMessageDisplayed() {
+        try {
+            return registrationSuccess.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
     }
-}
+
+    public boolean isErrorMessageDisplayed() {
+        try {
+            return errorMessage.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

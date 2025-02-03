@@ -16,19 +16,9 @@ public class LoginScreen extends BaseScreen{
     @FindBy(id = "com.telran.ilcarro:id/loginBtn")
     AndroidElement btnYalla;
 
-    @FindBy(id = "android:id/button1")
-    AndroidElement errorMessage;
-
     public void login(UserDTO user){
         inputEmail.sendKeys(user.getUsername());
         inputPassword.sendKeys(user.getPassword());
         btnYalla.click();
-    }
-    public boolean isErrorMessageDisplayed() {
-        try {
-            return errorMessage.isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
     }
 }

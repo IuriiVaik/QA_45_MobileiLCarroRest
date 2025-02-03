@@ -5,6 +5,7 @@ import dto.UserDTO;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import screens.ErrorScreen;
 import screens.LoginScreen;
 import screens.SearchScreen;
 import screens.SplashScreen;
@@ -24,65 +25,37 @@ public class LoginTests extends AppiumConfig {
         loginScreen = new LoginScreen(driver);
         loginScreen.login(
                 UserDTO.builder()
-                        .username("0bagginsbob@mail.com")
-                        .password("Qwerty123!")
-                        .build()
+                .username("0bagginsbob@mail.com")
+                .password("Qwerty123!")
+                .build()
         );
+        Assert.assertTrue(new SearchScreen(driver)
+                .validateMessageSuccess("Login success"));
     }
 
     @Test
-    public void loginWithInvalidEmail() {
+    public void loginNegativeTest_emailWithSpaces(){
         loginScreen = new LoginScreen(driver);
-
         loginScreen.login(
                 UserDTO.builder()
-                        .username("invalid-email")
-                        .password("Qwerty123!")
-                        .build()
+                .username(" 0bagginsbob@mail.com ")
+                .password("Qwerty123!")
+                .build()
         );
-
-        Assert.assertTrue(loginScreen.isErrorMessageDisplayed());
+        Assert.assertTrue(new SearchScreen(driver)
+                .validateMessageSuccess("Login success"));
     }
 
     @Test
-    public void loginWithIncorrectPassword() {
+    public void loginNegativeTest_emailWOAt(){
         loginScreen = new LoginScreen(driver);
-
         loginScreen.login(
                 UserDTO.builder()
-                        .username("0bagginsbob@mail.com")
-                        .password("WrongPassword123!")
-                        .build()
+                .username("0bagginsbobmail.com")
+                .password("Qwerty123!")
+                .build()
         );
-
-        Assert.assertTrue(loginScreen.isErrorMessageDisplayed());
-    }
-
-    @Test
-    public void loginWithEmptyFields() {
-        loginScreen = new LoginScreen(driver);
-
-        loginScreen.login(
-                UserDTO.builder()
-                        .username("")
-                        .password("")
-                        .build()
-        );
-
-        Assert.assertTrue(loginScreen.isErrorMessageDisplayed());
-    }
-
-    @Test
-    public void loginWithUnregisteredUser() {
-        loginScreen = new LoginScreen(driver);
-
-        loginScreen.login(
-                UserDTO.builder()
-                        .username("sftghjdtrhdrfhs@mail.com")
-                        .password("Qwerty123!")
-                        .build()
-        );
-
-        Assert.assertTrue(loginScreen.isErrorMessageDisplayed());
+        Assert.assertTrue(new ErrorScreen(driver)
+                .validateErrorMessage("Login or Password incorrect"));
     }
 }

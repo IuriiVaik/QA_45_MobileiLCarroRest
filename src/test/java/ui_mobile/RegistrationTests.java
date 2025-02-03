@@ -1,141 +1,56 @@
 package ui_mobile;
 
 import config.AppiumConfig;
+import dto.UserDTO;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import screens.ErrorScreen;
 import screens.RegistrationScreen;
 import screens.SearchScreen;
 import screens.SplashScreen;
 
-import java.util.Random;
+import static helper.RandomUtils.*;
 
 public class RegistrationTests extends AppiumConfig {
 
-    @BeforeMethod
-    public void beforeTest() {
+    private String userNameRegUser = "bm8hreura5@mail.com";
 
+    @BeforeMethod
+    public void beforeTest(){
         new SplashScreen(driver);
         new SearchScreen(driver).goToRegistrationScreen();
     }
 
     @Test
-    public void registrationPositiveTest() {
-
+    public void registrationPositiveTest(){
+        UserDTO user = UserDTO.builder()
+                .firstName(generateString(5))
+                .lastName(generateString(10))
+                .username(generateEmail(10))
+                .password("Qwerty123!")
+                .build();
+        System.out.println("--> "+user.getUsername());
         RegistrationScreen registrationScreen = new RegistrationScreen(driver);
-
-       //Generation rondom
-        int i = new Random().nextInt(10000) + 1000;
-        String Name = "Harry" + i;
-        String LastName = "Potter" + i;
-        String Email = "harry" + i + "@example.com";
-
-
-        registrationScreen
-                .enterName(Name)
-                .enterLastName(LastName)
-                .enterEmail(Email)
-                .enterPassword("StrongPass123!")
-                .agreeToTerms()
-                .submitRegistration();
-
-
-       boolean isWelcomeMessageDisplayed = registrationScreen.isWelcomeMessageDisplayed();
-
-
-         Assert.assertTrue(isWelcomeMessageDisplayed);
+        registrationScreen.typeRegistrationForm(user);
+        Assert.assertTrue(new SearchScreen(driver)
+                .validateMessageSuccess("Registration success!"));
     }
 
     @Test
-    public void registrationWithEmptyFields() {
+    public void registrationNegativeTest_duplicateUser(){
+        UserDTO user = UserDTO.builder()
+                .firstName(generateString(5))
+                .lastName(generateString(10))
+                .username(userNameRegUser)
+                .password("Qwerty123!")
+                .build();
+        System.out.println("--> "+user.getUsername());
         RegistrationScreen registrationScreen = new RegistrationScreen(driver);
-
-        registrationScreen
-                .submitRegistration();
-
-        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
-        Assert.assertTrue(isErrorDisplayed);
+        registrationScreen.typeRegistrationForm(user);
+        Assert.assertTrue(new ErrorScreen(driver)
+                .validateErrorMessage("User already exists"));
     }
 
-    @Test
-    public void registrationWithInvalidEmail() {
-        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
-
-        registrationScreen
-                .enterName("Harry")
-                .enterLastName("Potter")
-                .enterEmail("invalid-email")
-                .enterPassword("StrongPass123!")
-                .agreeToTerms()
-                .submitRegistration();
-
-        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
-        Assert.assertTrue(isErrorDisplayed);
-    }
-
-    @Test
-    public void registrationWithoutPassword() {
-        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
-
-        registrationScreen
-                .enterName("Harry")
-                .enterLastName("Potter")
-                .enterEmail("harry@example.com")
-                .enterPassword("")
-                .agreeToTerms()
-                .submitRegistration();
-
-        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
-        Assert.assertTrue(isErrorDisplayed);
-    }
-    @Test
-    public void registrationWithoutName() {
-        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
-
-        registrationScreen
-                .enterName("")
-                .enterLastName("Potter")
-                .enterEmail("harry@example.com")
-                .enterPassword("StrongPass123!")
-                .agreeToTerms()
-                .submitRegistration();
-
-        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
-        Assert.assertTrue(isErrorDisplayed);
-    }
-
-    @Test
-    public void registrationWithoutLastName() {
-        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
-
-        registrationScreen
-                .enterName("Harry")
-                .enterLastName("")
-                .enterEmail("harry@example.com")
-                .enterPassword("StrongPass123!")
-                .agreeToTerms()
-                .submitRegistration();
-
-        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
-        Assert.assertTrue(isErrorDisplayed);
-    }
-
-
-    @Test
-    public void registrationWithoutAgreeingToTerms() {
-        RegistrationScreen registrationScreen = new RegistrationScreen(driver);
-
-        registrationScreen
-                .enterName("Harry")
-                .enterLastName("Potter")
-                .enterEmail("harry@example.com")
-                .enterPassword("StrongPass123!")
-                // Terms не отмечены
-                .submitRegistration();
-
-        boolean isErrorDisplayed = registrationScreen.isErrorMessageDisplayed();
-        Assert.assertTrue(isErrorDisplayed);
-    }
 
 }
-

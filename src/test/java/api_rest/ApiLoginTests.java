@@ -36,7 +36,7 @@ public class ApiLoginTests extends AuthenticationController implements BaseApi {
     public void loginNegativeTest_wrongPassword(){
         UserDTO user = UserDTO.builder()
                 .username("0bagginsbob@mail.com")
-                .password("WrongPass123!") // Неверный пароль
+                .password("WrongPass123!")
                 .build();
 
         Response response = requestRegLogin(user, LOGIN);
